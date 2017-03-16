@@ -8,21 +8,29 @@ modified: MAR 15 2017
 #
 #Joel Grus: Learning Data Science using functional python
 #
+#
+#curl -u 'USER' https://api.github.com/user/repos -d '{"name":"REPO"}'
+#
 
 from functools import reduce, partial #aka currying
-from operator import iadd
+from operator import iadd, mul
 from itertools import count, islice, tee, repeat, cycle, chain
 from itertools import accumulate #(p, [func=add])  # python 3 ?
 
 
 # iteration with next
-lst = [1,2,3] ; it = iter(lst) ; nxt = next(it)
+lst = [1,2,3] ; it = iter(lst) ; print(next(it),next(it))
 
+# accumulate
+#accumulate(seq, [func])
+print([a for a in accumulate([1,2,3])])
+print( [a for a in accumulate([1,2,3], func=mul)] )
+print 
 
 def iterate(f, x):
     "iterate  - results in sequence x f(x) f(f(x)) ..."
     #yield x
-    #yield from iterate(f, f(x)) #python 3 syntax
+    #yield from iterate(f, f(x)) #python 3 syntax blows up stack
     return accumulate(repeat(x), lambda fx, _: f(fx) )
 
 #generator, a function with a yield
@@ -30,17 +38,20 @@ def lazy_integers_old(n=0):
     while True:
         yield n
         n +=1
-#x = lazy_integers_old()
-#[next(x) for _ in range(10)]
+ni = lazy_integers_old()
+print([next(ni) for _ in range(10)])
+
+# partial functions
 add1 = partial(iadd, 1)
 print(add1(2))
+
+# 
 def lazy_intergers(n=0):
     return iterate(add1, n)
 
 # generator comprehension
-squares = (x*x for x in lazy_intergers()) # use () not [] 
-print(next(squares))
-print(next(squares))
+squares = (x**2 for x in lazy_intergers()) # use () not [] 
+print(next(squares), next(squares), next(squares))
 
 # generators and piplines   
 # the equivilent of    cat filename | grep -i someword | wc -l 
@@ -54,10 +65,15 @@ with open("xmlFromNotice", "r") as f:
 
 def take(n, it):
     return [x for x in islice(it, n)]
+seq = [10,9,8,7,6,5,4,3,2,1,0]
+print( take(5,seq) )
 
 def drop(n, it):
-    return islice(it, n, None)
+    return [x for x in islice(it, n, None)]
 
+print( drop(4,seq) )
+tail = partial(drop, 1)
+print( tail(seq) )
 
 #force the first value of a sequence
 head = next
