@@ -18,6 +18,7 @@ from itertools import count, islice, tee, repeat, cycle, chain
 from itertools import accumulate #(p, [func=add])  # python 3 ?
 
 
+
 # iteration with next
 lst = [1,2,3] ; it = iter(lst) ; print(next(it),next(it))
 
@@ -39,15 +40,15 @@ def lazy_integers_old(n=0):
         yield n
         n +=1
 ni = lazy_integers_old()
-print([next(ni) for _ in range(10)])
+print([next(ni) for _ in range(10)])  # use of underscore as dummy variable
 
 # partial functions
 add1 = partial(iadd, 1)
 print(add1(2))
 
 # 
-def lazy_intergers(n=0):
-    return iterate(add1, n)
+def lazy_intergers():
+    return iterate(add1, 0)
 
 # generator comprehension
 squares = (x**2 for x in lazy_intergers()) # use () not [] 
@@ -65,8 +66,9 @@ with open("xmlFromNotice", "r") as f:
 
 def take(n, it):
     return [x for x in islice(it, n)]
+
 seq = [10,9,8,7,6,5,4,3,2,1,0]
-print( take(5,seq) )
+print( take(5,lazy_intergers()) )
 
 def drop(n, it):
     return [x for x in islice(it, n, None)]
@@ -84,13 +86,31 @@ tail = partial(drop,1)
     
 def fibs():
     def next_pair(pair):
-        x,y = pair
-        return (y, x+y)
-    return (y for x,y in iterate (next_pair, (0,1) ) )
+        a,b = pair
+        return (b, a+b)
+    return (y for x,y in iterate(next_pair, (0,1)))
+
+import time
+start_time = time.time()
+print( take(30,fibs()) )
+#take(30,fibs())
+print("--- %s seconds ---" % (time.time() - start_time))
+    
+
+def filter_primes(it):
+    '''will blow the stack'''
+    p = next(it)
+    yield p
+    yield from filter_primes(filter(lambda x: x%p > 0, it))
+def all_primes():
+    return filter_primes(count(2))
+
+print(take(100,all_primes()))
+    
     
     
 #gradient descent 
-def f(x_i):
+def f(x_i): 
     return sum(x_ij**2 for x_ij in x_i)
 def df(x_i):
     return [2*x_ij for x_ij in x_i]
