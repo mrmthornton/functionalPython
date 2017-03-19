@@ -18,7 +18,6 @@ from itertools import count, islice, tee, repeat, cycle, chain
 from itertools import accumulate #(p, [func=add])  # python 3 ?
 
 
-
 # iteration with next
 lst = [1,2,3] ; it = iter(lst) ; print(next(it),next(it))
 
@@ -108,7 +107,6 @@ def all_primes():
 print(take(100,all_primes()))
     
     
-    
 #gradient descent 
 def f(x_i): 
     return sum(x_ij**2 for x_ij in x_i)
@@ -120,14 +118,16 @@ def gradientStep(df, alpha, x_i):
 def gradientDescent(df, x_0, alpha=0.1):
     return iterate( partial(gradientStep, df, -alpha), x_0) 
 
-#matplotlib animation 
-##from matplotlib import animation
-##def animationFrame(nframe):
-##    plt.cla()
-##    x,y = getdataFor(nframe)
-##    plt.plot(x,y)
-##fig = plt.figure(figsize=(5,4))
-##amim = animation.FuncAnimation(fig, animationFrame, frames=numFrames)
-##anim.save("animation.gif", write='imagemagick', fps=4)
+
+# Matplotlib Animation 
+#from matplotlib import animation
+#from matplotlib import pyplot as plt
+#def animationFrame(nframe):
+#    plt.cla()
+#    x,y = getdataFor(nframe)
+#    plt.plot(x,y)
+#fig = plt.figure(figsize=(5,4))
+#amim = animation.FuncAnimation(fig, animationFrame, frames=numFrames)
+#anim.save("animation.gif", write='imagemagick', fps=4)
 
 # Stochastic Gradeint DESCENT
