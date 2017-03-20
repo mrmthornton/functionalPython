@@ -98,7 +98,7 @@ def animationFrame(nframe):
         plt.plot(*mean, color=color, marker='*', markesize=10)
 
 numFrames = len(meanses)
-fig = plt.figure(figsize=(5,4))
+#debug#fig = plt.figure(figsize=(5,4))
 #debug#anim = animation.FuncAnimation(fig, animationFrame, frames=numFrames)
 #debug#anim.save("animation.gif", write='imagemagick', fps=4)
 
@@ -167,6 +167,9 @@ steps = 20
 show_every = 5
 results = [x for x in take(steps, sgd(sqerror_gradient, x, y, beta_0, 0.01))]
 subresults = results[::show_every]
+
+from matplotlib import animation
+from matplotlib import pyplot as plt
 nframes = len(subresults)
 
 def animation_frame(nframe):
@@ -174,8 +177,11 @@ def animation_frame(nframe):
     # regression line goes through (0,a) and (1,a+b)
     plt.plot([0,1],[a, a+b])
     plt.show()
-    
 
+fig = plt.figure("Stochastic", figsize=(5,4))
+plt.plot([x[0] for x[0] in x],[x[1] for x[1] in x])
+plt.show()
+#anim = animation.FuncAnimation(fig, animationFrame, frames=numFrames)
 
 print('DONE')
 
