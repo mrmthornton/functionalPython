@@ -12,10 +12,10 @@ modified: MAR 15 2017
 #curl -u 'USER' https://api.github.com/user/repos -d '{"name":"REPO"}'
 #
 
-from functools import reduce, partial #aka currying
+from functools import reduce, partial  #aka currying
 from operator import iadd, mul
 from itertools import count, islice, tee, repeat, cycle, chain
-from itertools import accumulate #(p, [func=add])  # python 3 ?
+from itertools import accumulate #(p, [func=add])
 
 
 # iteration with next
