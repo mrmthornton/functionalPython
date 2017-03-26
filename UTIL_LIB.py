@@ -10,13 +10,15 @@
 #-------------------------------------------------------------------------------
 
 
-#import tkMessageBox
-from functionalLIB import take, drop
+from functools import partial
 from itertools import accumulate
 from tkinter import *
-from toolz import compose
-import re
+from toolz import compose, partial
+import re 
 import time
+#import tkMessageBox
+
+from functionalLIB import take, drop, iterate
 
 
 def cleanUpStringImperitive(messyString):
@@ -42,14 +44,17 @@ def commaToNewline(s):
 
 
 def noDoubleNewlines(s):
-    ''' finds any sequence of newline chars, 
-    and replaces the group with single newline '''
-    multipleNewlinePattern =re.compile('\n\n+')
+    ''' finds any sequence of newline chars, and replaces the group with single newline '''
+    def singleNewline(inString):
+        found = multipleNewlinePattern.search(s)
+        result = inString[:found.start()] + '\n' + inString[found.end():]
+        return result
+    multipleNewlinePattern =re.compile('\n{2,}', flags=re.MULTILINE)
     n = len(multipleNewlinePattern.findall(s))
-    for i in range(n):
-        t = multipleNewlinePattern.search(s)
-        s  =  s[:t.start()] + '\n' + s[t.end():]
-    return accumulate()
+    if n == 0: 
+        return s
+    else: 
+        return take(n+1, iterate(singleNewline, s))
     
 def cleanUpStringFunctional(messyString):
     ''' a functional form of 'cleanUpString' '''
@@ -63,11 +68,13 @@ def test_CleanUpStrings():
     mess5 = "multiple\n\n new\n\nlines"
     
     print(mess1, mess2, mess3, mess4, mess5)
+    print('IMPERITIVE')
     print(cleanUpStringImperitive(mess1),
           cleanUpStringImperitive(mess2),
           cleanUpStringImperitive(mess3),
           cleanUpStringImperitive(mess4),
           cleanUpStringImperitive(mess5))
+    print('FUNCTIONAL')
     print(cleanUpStringFunctional(mess1),
           cleanUpStringFunctional(mess2),
           cleanUpStringFunctional(mess3),
@@ -88,7 +95,6 @@ def loadRegExPatterns():
         datePattern=re.compile('[0-9]{2,2}/[0-9]{2,2}/[0-9]{4,4}'),
         dateYearFirstPattern=re.compile(r'\d{4,4}/\d{2,2}/\d{2,2}')
     )
-    
 
 
 def parseString(inputString,indexPattern, targetPattern, segment="all"): # segment may be start, end, or all
